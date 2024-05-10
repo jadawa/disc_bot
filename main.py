@@ -2,7 +2,6 @@ import asyncio
 import discord
 import requests
 
-
 # Discord bot token
 TOKEN = ""
 
@@ -34,6 +33,9 @@ client = discord.Client(intents=intents)
 async def on_ready():
     print(f"We have logged in as {client.user}")
 
+
+def check_prompt(m):
+            return m.author == message.author and m.channel == message.channel
 
 @client.event
 async def on_message(message):
@@ -204,7 +206,7 @@ def generate_dalle_image(prompt):
 
 def get_current_conditions():
     headers = {
-        'Authorization': 'Bearer '
+        'Authorization': 'Bearer tokenHere'
     }
     payload = {
     }
