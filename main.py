@@ -17,9 +17,6 @@ CURRENT_CONDITIONS_URL = "https://weather.api.dtn.com/v2/conditions?lat=44.9484&
 # geocoder url
 GEOCODER_URL = "https://map.api.dtn.com/v1/geocoder?searchText="
 
-# OpenAI TTS API endpoint
-TTS_API_ENDPOINT = "https://api.openai.com/v1/audio/speech"
-
 # OpenAI API key
 API_KEY = ""
 
@@ -32,16 +29,16 @@ client = discord.Client(intents=intents)
 @client.event
 async def on_ready():
     print(f"We have logged in as {client.user}")
-
-
-def check_prompt(m):
-            return m.author == message.author and m.channel == message.channel
+    
 
 @client.event
 async def on_message(message):
     # Ignore messages sent by the bot itself
     if message.author == client.user:
         return
+    
+    def check_prompt(m):
+                return m.author == message.author and m.channel == message.channel
 
     # Check if the message mentions the bot or starts with a command prefix
     if client.user in message.mentions or message.content.startswith("!bot"):
@@ -55,10 +52,6 @@ async def on_message(message):
         if content.lower() == "chat":
             # Send a prompt message to the user
             prompt_message = await message.channel.send("Please provide a chat prompt:")
-
-            # Wait for the user's response with the chat prompt
-            def check_prompt(m):
-                return m.author == message.author and m.channel == message.channel
 
             try:
                 prompt_response = await client.wait_for('message', check=check_prompt, timeout=60)
@@ -77,10 +70,6 @@ async def on_message(message):
             # Send a prompt message to the user
             prompt_message = await message.channel.send("Please provide a prompt for the image generation:")
 
-            # Wait for the user's response with the image generation prompt
-            def check_prompt(m):
-                return m.author == message.author and m.channel == message.channel
-
             try:
                 prompt_response = await client.wait_for('message', check=check_prompt, timeout=60)
                 prompt = prompt_response.content.strip()
@@ -97,9 +86,6 @@ async def on_message(message):
             # Send a prompt message to the user
             prompt_message = await message.channel.send("Please provide an address or city:")
 
-            # Wait for the user's response with the image generation prompt
-            def check_prompt(m):
-                return m.author == message.author and m.channel == message.channel
 
             try:
                 prompt_response = await client.wait_for('message', check=check_prompt, timeout=60)
@@ -117,19 +103,14 @@ async def on_message(message):
             # Send a prompt message to the user
             prompt_message = await message.channel.send("One second please!")
 
-            # Wait for the user's response with the chat prompt
-            def check_prompt(m):
-                return m.author == message.author and m.channel == message.channel
-
             try:
                 # send request
                 response = get_current_conditions()
 
-                # Send the response from ChatGPT API to the Discord channel
+                # Send the response from API to the Discord channel
                 await message.channel.send(response)
             except asyncio.TimeoutError:
                 await message.channel.send("Prompt response timed out.")
-
 
 
         elif content.lower() == "commands":
@@ -155,7 +136,7 @@ def send_to_chatgpt(message):
             {"role": "system", "content": "You are ChatGPT Bot"},
             {"role": "user", "content": message}
         ],
-        "model": "gpt-3.5-turbo"  # Specify the model to be used
+        "model": "gpt-4-turbo"  # Specify the model to be used
     }
 
     # Send request to ChatGPT API
@@ -236,6 +217,6 @@ def get_geocode(prompt):
     else:
         return f"API request failed with status code {response.status_code}: {response.text}"
 
-
+            
 # Run the Discord bot
 client.run(TOKEN)
